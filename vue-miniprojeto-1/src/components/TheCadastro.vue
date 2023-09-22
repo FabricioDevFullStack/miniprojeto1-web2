@@ -4,20 +4,21 @@
       <br/>
       <form @submit.prevent>
         <div class="form-group">
-          <label for="name">Nome: </label>
+          <label for="name">Nome:&nbsp;</label>
           <input type="text" id="name" v-model="usuario.nome" required>
         </div>
         <div class="form-group">
-          <label for="papel">Papeis: </label>
+          <label for="papel">Papel:&nbsp;</label>
           <input type="text" id="papel" v-model="papel.descricao">
-          &nbsp;<button @click="adicionarPapel">Adicionar</button>
+          &nbsp;<button class="btn btn-secondary" @click="adicionarPapel">Adicionar</button>
         </div>
         <div>
-          <ol style="margin-left: 100px;">
-            <li v-for="papel in usuario.papeis" :key="papel.dataCadastro">{{ papel.descricao }}</li>
+          <ol style="margin-left: 50px;">
+            <li v-for="papel in usuario.papeis" :key="papel.dataCadastro">{{ papel.descricao }} <a title="Excluir Papel" @click="excluiPapel(papel)"><font-awesome-icon icon="fa-solid fa-trash" /></a></li>
           </ol>
         </div>
-        <button type="submit" @click="submitForm">Cadastrar</button>
+        <button type="submit" class="btn btn-primary" @click="submitForm">Cadastrar</button>
+        <button class="btn btn-secondary" @click="cancelar">Cancelar</button>
       </form>
     </div>
   </template>
@@ -29,7 +30,7 @@
     data() {
       return {
         usuario: {
-          id: 0,
+          id: this.$route.params.id ? this.$route.params.id : 0,
           dataCadastro: Date.now(),
           nome: '',
           papeis: []
@@ -44,7 +45,9 @@
     methods: {
       submitForm() {
         if(this.usuario.nome) {
-          axios.post('http://localhost:8080/usuarios', this.usuario)
+
+          let metodo = this.usuario.id > 0 ? 'put' : 'post'
+          axios[metodo]('http://localhost:8080/usuarios', this.usuario)
                      .then(response => {
                         console.log(response.data)
                      })
@@ -66,7 +69,33 @@
           dataCadastro: Date.now(),
           descricao: ''
         }
+      },
+
+      getUsuario(id) {
+        axios.get('http://localhost:8080/usuarios/'+id)
+                     .then(response => {
+                        this.usuario = response.data
+                     })
+                     .catch(error => {
+                        console.log(error)
+                     })
+      },
+
+      cancelar() {
+        this.$router.push('/')
+      },
+
+      excluiPapel(papel) {
+        this.usuario.papeis = this.usuario.papeis.filter(p => {
+            return new Date(p.dataCadastro).getTime() != new Date(papel.dataCadastro).getTime() 
+        })
+        
       }
+    },
+
+    beforeMount() {
+        if(this.usuario.id > 0)
+            this.getUsuario(this.usuario.id)
     }
   };
   </script>

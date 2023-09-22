@@ -2,6 +2,7 @@ package br.com.imd.repositories;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import br.com.imd.domain.Papel;
 
@@ -20,9 +21,9 @@ public class PapelRepository {
 		papeis.add(p);
 		return p;
 	}
-	
-	
-	
-	
+
+	public static void deletePapel(int id) {
+		papeis = papeis.stream().filter(papel -> papel.getId() != id).collect(Collectors.toList());
+	}
 	
 }

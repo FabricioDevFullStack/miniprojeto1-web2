@@ -2,10 +2,8 @@ package br.com.imd.controllers;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import br.com.imd.repositories.PapelRepository;
+import org.springframework.web.bind.annotation.*;
 
 import br.com.imd.domain.Usuario;
 import br.com.imd.repositories.UsuarioRepository;
@@ -18,9 +16,24 @@ public class UsuarioController {
 		return UsuarioRepository.getUsuarios();
 	}
 
+	@RequestMapping("/usuarios/{id}")
+	public Usuario getUsuarioById(@PathVariable("id") int id) {
+		return UsuarioRepository.getUsuario(id);
+	}
+
 	@PostMapping("/usuarios")
 	public Usuario addUsuario(@RequestBody Usuario usuario) {
 		return UsuarioRepository.addUsuario(usuario);
+	}
+
+	@PutMapping("/usuarios")
+	public Usuario editUsuario(@RequestBody Usuario usuario) {
+		return UsuarioRepository.editUsuario(usuario);
+	}
+
+	@DeleteMapping("/usuarios/{id}")
+	public void deleteUsuario(@PathVariable("id") int id) {
+		UsuarioRepository.deleteUsuario(id);
 	}
 
 }
